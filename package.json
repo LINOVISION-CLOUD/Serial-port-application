@@ -1,6 +1,6 @@
 {
   "name": "electron-vue-serial-app",
-  "version": "1.0.6",
+  "version": "1.0.0",
   "type": "module",
   "description": "An offline desktop app for serial communication",
   "main": "out/main/index.js",
