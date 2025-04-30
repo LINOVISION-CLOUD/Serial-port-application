@@ -46,8 +46,8 @@ jobs:
           body: |
             This version is the official release of Electron Vue Serial App.
             Includes the following updates:
-              - Feature update description
-              - Bug fix description
+              - Feature update description.
+              - Bug fix description.
           files: |
             ./dist/*.exe
             ./dist/*.dmg
