@@ -59,8 +59,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "YouNianEn",
-      "repo": "LINOVISION"
+      "owner": "LINOVISION-CLOUD",
+      "repo": "Serial-port-application"
     }
   }
 }
