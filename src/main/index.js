@@ -35,8 +35,8 @@ function createWindow() {
       contextIsolation: true,
       webSecurity: false,
     },
-    // autoHideMenuBar: true, // 自动隐藏菜单栏
-    // menu: null, // 移除菜单栏
+    autoHideMenuBar: true, // 自动隐藏菜单栏
+    menu: null, // 移除菜单栏
   });
 
   if (app.isPackaged) {

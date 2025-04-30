@@ -37,3 +37,22 @@ jobs:
 
       - name: Build and release
         run: npm run dist
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            This version is the official release of Electron Vue Serial App.
+            Includes the following updates:
+              - Feature update description
+              - Bug fix description
+          files: |
+            ./dist/*.exe
+            ./dist/*.dmg
+            ./dist/*.AppImage
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.LINOVISION }}
