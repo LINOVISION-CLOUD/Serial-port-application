@@ -1,0 +1,39 @@
+name: Electron Build and Release
+
+on:
+  push:
+    tags:
+      - v*  # 匹配所有以 v 开头的标签
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.LINOVISION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.0.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify GH_TOKEN
+        shell: bash
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "GH_TOKEN is not set correctly."
+            exit 1
+          else
+            echo "GH_TOKEN is set. First 5 characters: ${GH_TOKEN:0:15}"
+          fi
+
+      - name: Build and release
+        run: npm run dist
