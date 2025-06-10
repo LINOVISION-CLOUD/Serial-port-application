@@ -151,7 +151,17 @@ import { ElMessage } from "element-plus";
 
 import { useDeviceStore } from "../stores/deviceStore.js";
 const deviceStore = useDeviceStore();
-const availableBaudRates = ref([9600, 115200]);
+const availableBaudRates = ref([
+  2400, // 传统拨号调制解调器常用
+  4800, // 低速串口设备
+  9600, // 常见工业设备、Arduino默认波特率
+  14400, // 较少使用的过渡速率
+  19200, // 传统串口设备
+  38400, // 部分工业设备和传感器
+  57600, // 早期串口通信标准
+  115200, // 现代单片机（如ESP32）、多数串口设备默认
+  230400, // 高速串口通信
+]);
 const selectedDeviceTypeIndex = ref(deviceStore.selectedDeviceType);
 const slaveAddress = ref(deviceStore.slaveAddress);
 const baudRate = ref(deviceStore.baudRate);

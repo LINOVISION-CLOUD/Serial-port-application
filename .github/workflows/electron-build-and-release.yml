@@ -1,4 +1,4 @@
-name: Electron Build and Release
+name: LINOVISION Serial
 
 on:
   push:
@@ -7,7 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
     env:
       GH_TOKEN: ${{ secrets.LINOVISION }}
     steps:
@@ -32,8 +35,14 @@ jobs:
             echo "GH_TOKEN is not set correctly."
             exit 1
           else
-            echo "GH_TOKEN is set. First 5 characters: ${GH_TOKEN:0:15}"
+            echo "GH_TOKEN is set. First 5 characters: ${GH_TOKEN:0:5}"
           fi
 
       - name: Build and release
         run: npm run dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/
