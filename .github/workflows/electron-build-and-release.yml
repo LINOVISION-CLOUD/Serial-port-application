@@ -11,15 +11,15 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
-      fail-fast: false  # 允许其他作业继续执行，即使有一个失败
+      fail-fast: false
     env:
       GH_TOKEN: ${{ secrets.LINOVISION }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  # 确保使用最新版本
+        uses: actions/checkout@v4
         
       - name: Set up Node.js
-        uses: actions/setup-node@v4  # 确保使用最新版本
+        uses: actions/setup-node@v4
         with:
           node-version: 20.0.0
           
@@ -40,11 +40,18 @@ jobs:
           fi
           
       - name: Build and release
-        run: npm run dist
-        
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            # 针对 macOS 构建多架构应用
+            npm run dist -- --mac --arm64 --x64
+          else
+            # 针对 Windows 构建
+            npm run dist -- --win
+          fi
+          
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4  # 更新到 v4 版本
+        uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}
           path: dist/
-          retention-days: 30  # 可选：设置保留天数
+          retention-days: 30
