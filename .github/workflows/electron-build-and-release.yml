@@ -1,4 +1,4 @@
-name: LINOVISION Serial
+name: Electron Build and Release
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
         run: npm run dist
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # 使用最新版本
         with:
           name: dist-${{ matrix.os }}
           path: dist/
