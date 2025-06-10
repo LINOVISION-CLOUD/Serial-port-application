@@ -42,12 +42,11 @@ jobs:
       - name: Build and release
         run: |
           if [ "${{ matrix.os }}" == "macos-latest" ]; then
-            # 针对 macOS 构建多架构应用
-            npm run dist -- --mac --arm64 --x64
+            # 使用 --mac 选项,electron-builder 会根据 package.json 中的配置构建多架构
+            npm run dist -- --mac
           else
             # 针对 Windows 构建
             npm run dist -- --win
-          fi
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

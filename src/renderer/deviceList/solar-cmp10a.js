@@ -24,7 +24,7 @@ function setHex(value) {
   return value;
 }
 export default {
-  name: "Solar-CMP10A",
+  name: "Solar-CMP10A/POE-804G-Solar",
   defaultSlaveAddress: 1,
   defaultBaudRate: 9600,
   defaultDataBits: 8,
