@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Serial Communication App</h1>
+    <h1>LINOVISION Tool Box</h1>
 
     <el-form label-position="top">
       <el-form-item label="Select Port">

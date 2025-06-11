@@ -1,5 +1,5 @@
 {
-  "name": "linovision-serial-app",
+  "name": "linovision-tool-box",
   "version": "1.0.3",
   "type": "module",
   "description": "An offline desktop app for serial communication",
@@ -41,7 +41,7 @@
   },
   "build": {
     "appId": "com.example.electronvueserialapp",
-    "productName": "LINOVISION Serial",
+    "productName": "LINOVISION Tool Box",
     "copyright": "Copyright © 2025 Your Name",
     "win": {
       "target": [

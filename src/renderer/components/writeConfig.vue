@@ -81,13 +81,8 @@ const dialogShow = ref(false);
 const writeLoading = ref(false);
 const writeConfig = async (detail, flag) => {
   try {
-    console.log(
-      deviceTypes.value[selectedDeviceType.value].name ==
-        "Solar-CMP10A/POE-804G-Solar"
-    );
     writeLoading.value = true;
     let writeDetail = detail;
-    console.log(selectedDeviceType);
     switch (flag) {
       case 1:
         writeDetail.forEach((o) => {
@@ -214,7 +209,6 @@ const writeConfig = async (detail, flag) => {
         });
         break;
     }
-    console.log(writeDetail);
     await deviceStore.sendConfigCommand(writeDetail);
     if (deviceStore.configStatus) {
       writeLoading.value = false;
