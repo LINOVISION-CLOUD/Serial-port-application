@@ -6948,7 +6948,7 @@ export default {
     return {
       cmd: command,
       timeout: 2000,
-      resolve: function (result) {
+      resolveFn: function (result) {
         if (result.length < 10) {
           return {
             type: "config",

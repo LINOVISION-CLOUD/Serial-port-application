@@ -78,6 +78,7 @@ export const useDeviceStore = defineStore("device", {
     },
     // 发送手动指令的通用处理（带原有resolveFn支持）
     async sendManualCommand(executeFn) {
+      console.log(executeFn, "executeFn");
       return new Promise((resolve, reject) => {
         this.commandQueue.push({ executeFn, resolve, reject });
         if (!this.isSendingManual && this.commandQueue.length === 1) {
@@ -90,16 +91,15 @@ export const useDeviceStore = defineStore("device", {
     async executeNextManualCommand() {
       const currentCmd = this.commandQueue[0];
       if (!currentCmd || this.isSendingManual) return;
-
       const { executeFn, resolve, reject } = currentCmd;
       const device = this.deviceTypes[this.selectedDeviceType];
-
       try {
         this.isSendingManual = true;
         this.resetInterval(); // 暂停自动读取
 
         // 获取指令配置（包含resolveFn）
         const { cmd, resolveFn, timeout } = executeFn();
+
         this.currentResolveFn = resolveFn;
 
         await window.electronAPI.sendData(
@@ -215,6 +215,7 @@ export const useDeviceStore = defineStore("device", {
               return { ...operate, value };
             });
           });
+          console.log(this.operates);
         }
       } else if (result?.type === "slave") {
         // 处理从机地址修改响应

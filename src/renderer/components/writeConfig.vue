@@ -82,10 +82,9 @@ const writeLoading = ref(false);
 const writeConfig = async (detail, flag) => {
   try {
     writeLoading.value = true;
-    let writeDetail = detail;
     switch (flag) {
       case 1:
-        writeDetail.forEach((o) => {
+        detail.forEach((o) => {
           if (o.check == "31") {
             o.value = 1;
           }
@@ -116,7 +115,7 @@ const writeConfig = async (detail, flag) => {
         });
         break;
       case 2:
-        writeDetail.forEach((o) => {
+        detail.forEach((o) => {
           if (o.check == "31") {
             o.value = 2;
           }
@@ -147,7 +146,7 @@ const writeConfig = async (detail, flag) => {
         });
         break;
       case 3:
-        writeDetail.forEach((o) => {
+        detail.forEach((o) => {
           if (o.check == "31") {
             o.value = 1;
           }
@@ -178,7 +177,7 @@ const writeConfig = async (detail, flag) => {
         });
         break;
       case 4:
-        writeDetail.forEach((o) => {
+        detail.forEach((o) => {
           if (o.check == "31") {
             o.value = 2;
           }
@@ -209,7 +208,7 @@ const writeConfig = async (detail, flag) => {
         });
         break;
     }
-    await deviceStore.sendConfigCommand(writeDetail);
+    await deviceStore.sendConfigCommand(detail);
     if (deviceStore.configStatus) {
       writeLoading.value = false;
       deviceStore.slaveAddress = form.value.slaveAddress;
@@ -237,5 +236,8 @@ defineExpose({
 <style scoped lang="scss">
 :deep(.el-select__input) {
   margin: 0 !important;
+}
+:deep(.el-row) {
+  overflow: auto;
 }
 </style>
