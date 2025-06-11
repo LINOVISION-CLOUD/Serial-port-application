@@ -205,7 +205,6 @@ export const useDeviceStore = defineStore("device", {
           this.receivedData.push(...result.data.checks);
         }
         if (result.data.operates) {
-          console.log(this.operates[0].length);
           this.operates = this.operates.map((operates) => {
             return operates.map((operate) => {
               console.log(result.data.operates[operate.check], operate.check);
@@ -216,7 +215,6 @@ export const useDeviceStore = defineStore("device", {
               return { ...operate, value };
             });
           });
-          console.log(this.operates);
         }
       } else if (result?.type === "slave") {
         // 处理从机地址修改响应
