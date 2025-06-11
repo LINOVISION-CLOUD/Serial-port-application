@@ -9,8 +9,7 @@
       <div
         style="margin-bottom: 15px"
         v-if="
-          deviceTypes[selectedDeviceType].name ==
-            'Solar-CMP10A/POE-804G-Solar' && item[0].value != undefined
+          deviceTypes[selectedDeviceType].name == 'Solar-CMP10A/POE-804G-Solar'
         "
       >
         <el-button @click="writeConfig(item, 1)">12V LiFePO (4S)</el-button>
