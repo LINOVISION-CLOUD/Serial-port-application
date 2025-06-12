@@ -85,7 +85,7 @@ const writeConfig = async (detail, flag) => {
       case 1:
         detail.forEach((o) => {
           if (o.check == "18") {
-            o.value = 3;
+            o.value = 4;
           }
           if (o.check == "31") {
             o.value = 1;
@@ -119,13 +119,13 @@ const writeConfig = async (detail, flag) => {
       case 2:
         detail.forEach((o) => {
           if (o.check == "18") {
-            o.value = 3;
+            o.value = 4;
           }
           if (o.check == "31") {
             o.value = 2;
           }
           if (o.check == "32") {
-            o.value = 28.8;
+            o.value = 14.4;
           }
           if (o.check == "33") {
             o.value = 10;
@@ -134,26 +134,26 @@ const writeConfig = async (detail, flag) => {
             o.value = 0.5;
           }
           if (o.check == "20") {
-            o.value = 22.4;
+            o.value = 11.2;
           }
           if (o.check == "21") {
-            o.value = 24.6;
+            o.value = 12.3;
           }
           if (o.check == "19") {
-            o.value = 30;
+            o.value = 15;
           }
           if (o.check == "23") {
-            o.value = 28.4;
+            o.value = 14.2;
           }
           if (o.check == "22") {
-            o.value = 28.8;
+            o.value = 14.4;
           }
         });
         break;
       case 3:
         detail.forEach((o) => {
           if (o.check == "18") {
-            o.value = 3;
+            o.value = 4;
           }
           if (o.check == "31") {
             o.value = 1;
@@ -187,13 +187,13 @@ const writeConfig = async (detail, flag) => {
       case 4:
         detail.forEach((o) => {
           if (o.check == "18") {
-            o.value = 3;
+            o.value = 4;
           }
           if (o.check == "31") {
             o.value = 2;
           }
           if (o.check == "32") {
-            o.value = 29.4;
+            o.value = 14.7;
           }
           if (o.check == "33") {
             o.value = 10;
@@ -202,19 +202,19 @@ const writeConfig = async (detail, flag) => {
             o.value = 0.5;
           }
           if (o.check == "20") {
-            o.value = 21;
+            o.value = 10.5;
           }
           if (o.check == "21") {
-            o.value = 22.2;
+            o.value = 11.1;
           }
           if (o.check == "19") {
-            o.value = 30.8;
+            o.value = 25.4;
           }
           if (o.check == "23") {
-            o.value = 28.7;
+            o.value = 14.3;
           }
           if (o.check == "22") {
-            o.value = 29.4;
+            o.value = 14.7;
           }
         });
         break;

@@ -70,10 +70,10 @@ export const useDeviceStore = defineStore("device", {
       if (!this.portPath) return;
       try {
         await window.electronAPI.closeSerialPort(this.portPath);
-        console.log("端口关闭成功");
+        console.log("close");
         // this.portPath = "";
       } catch (error) {
-        console.error("端口关闭失败:", error);
+        console.error("fail:", error);
       }
     },
     // 发送手动指令的通用处理（带原有resolveFn支持）
@@ -151,10 +151,11 @@ export const useDeviceStore = defineStore("device", {
     },
 
     // 发送配置指令（保持原有函数调用方式）
-    async sendConfigCommand(operates) {
+    async sendConfigCommand(detail) {
+      console.log(detail);
       if (!this.portPath) return;
       const device = this.deviceTypes[this.selectedDeviceType];
-      return this.sendManualCommand(() => device.configFunction(operates));
+      return this.sendManualCommand(() => device.configFunction(detail));
     },
 
     // 自动读取（保持原有loop逻辑）
@@ -188,7 +189,6 @@ export const useDeviceStore = defineStore("device", {
       const device = this.deviceTypes[this.selectedDeviceType];
       const { cmd, resolveFn } = device.readFunction(this.slaveAddress);
       const commands = Array.isArray(cmd) ? cmd : cmd.split(",");
-      console.log(commands);
       for (const singleCmd of commands) {
         if (this.isSendingManual) break;
         this.currentResolveFn = resolveFn; // 设置自动读取的解析函数
@@ -226,7 +226,6 @@ export const useDeviceStore = defineStore("device", {
         if (result.data.operates) {
           this.operates = this.operates.map((operates) => {
             return operates.map((operate) => {
-              console.log(result.data.operates[operate.check], operate.check);
               const value =
                 result.data.operates[operate.check] != undefined
                   ? result.data.operates[operate.check]
@@ -234,7 +233,6 @@ export const useDeviceStore = defineStore("device", {
               return { ...operate, value };
             });
           });
-          console.log(this.operates);
         }
       } else if (result?.type === "slave") {
         // 处理从机地址修改响应
@@ -270,7 +268,6 @@ export const useDeviceStore = defineStore("device", {
             this.slaveAddress
           );
           const command = Array.isArray(cmd) ? cmd : cmd.split(",");
-          console.log(command[0]);
 
           // 发送命令并设置超时（依赖preload的sendData超时）
           await window.electronAPI.sendData(
