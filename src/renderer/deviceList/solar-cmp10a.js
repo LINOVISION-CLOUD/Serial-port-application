@@ -6667,7 +6667,6 @@ export default {
       cmd: command,
       timeout: 1000,
       resolveFn: function (result) {
-        console.log(result, "太阳能的16进制数据");
         const allOperates = {};
         if (result.substr(0, 2) == "40" && result.substr(2, 2) == "01") {
           allOperates["11"] = parseInt(result.substr(6, 2), 16); // 产品型号
@@ -6945,6 +6944,7 @@ export default {
 
       command = comm + customChecksum(comm);
     }
+    console.log(command);
     return {
       cmd: command,
       timeout: 2000,
@@ -6978,16 +6978,18 @@ export default {
           };
         }
         var data = result.substr(6, 2);
-        if (data === "01") {
+        console.log(data);
+        if (data == "01") {
           return {
             type: "config",
             data: true,
           };
+        } else {
+          return {
+            type: "config",
+            data: false,
+          };
         }
-        return {
-          type: "config",
-          data: false,
-        };
       },
     };
   },

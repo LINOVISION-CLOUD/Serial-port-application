@@ -99,7 +99,6 @@ export const useDeviceStore = defineStore("device", {
 
         // 获取指令配置（包含resolveFn）
         const { cmd, resolveFn, timeout } = executeFn();
-
         this.currentResolveFn = resolveFn;
 
         await window.electronAPI.sendData(
@@ -117,6 +116,8 @@ export const useDeviceStore = defineStore("device", {
               `Operation timed out (${timeout || this.manualCommandTimeout}ms)`
             )
           );
+          this.executeNextManualCommand(); // 处理下一个队列指令
+          this.resumeAutoReading(); // 恢复自动读取
         }, timeout || this.manualCommandTimeout);
 
         // 等待数据处理（由handleReceivedData触发）
@@ -128,6 +129,7 @@ export const useDeviceStore = defineStore("device", {
           this.commandQueue.shift();
           resolve(result);
           this.executeNextManualCommand(); // 处理下一个队列指令
+          this.resumeAutoReading(); // 恢复自动读取
         };
 
         window.electronAPI.onData(this.portPath, onDataHandler);
@@ -135,6 +137,7 @@ export const useDeviceStore = defineStore("device", {
         this.isSendingManual = false;
         this.commandQueue.shift();
         reject(error);
+        this.resumeAutoReading(); // 恢复自动读取
       }
     },
 
@@ -162,13 +165,30 @@ export const useDeviceStore = defineStore("device", {
         this.sendInterval = setInterval(() => this.loopSend(), 10000);
       }
     },
+
+    // 恢复自动读取功能
+    resumeAutoReading() {
+      // 检查是否还有手动指令在执行
+      if (!this.isSendingManual && this.commandQueue.length === 0) {
+        // 只有在没有手动指令执行时才恢复自动读取
+        // 直接调用loopSend()而不是sendReadCommand()，避免重复创建定时器
+        if (!this.sendInterval && this.portPath) {
+          window.electronAPI.onData(this.portPath, (data) =>
+            this.handleReceivedData(data)
+          );
+          this.loopSend();
+          this.sendInterval = setInterval(() => this.loopSend(), 10000);
+        }
+      }
+    },
+
     // 自动读取循环（恢复原有resolveFn处理）
     async loopSend() {
       if (this.isSendingManual || !this.portPath) return;
       const device = this.deviceTypes[this.selectedDeviceType];
       const { cmd, resolveFn } = device.readFunction(this.slaveAddress);
       const commands = Array.isArray(cmd) ? cmd : cmd.split(",");
-
+      console.log(commands);
       for (const singleCmd of commands) {
         if (this.isSendingManual) break;
         this.currentResolveFn = resolveFn; // 设置自动读取的解析函数
@@ -192,7 +212,6 @@ export const useDeviceStore = defineStore("device", {
       if (!this.currentResolveFn) return; // 无解析函数时直接忽略
 
       const result = this.currentResolveFn(this.binaryToHex(data));
-
       if (result?.type === "read") {
         // 处理自动读取结果
         if (result.data.checks) {

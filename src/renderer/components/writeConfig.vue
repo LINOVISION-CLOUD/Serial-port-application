@@ -72,7 +72,6 @@
 import { ref, toRefs } from "vue";
 import { useDeviceStore } from "../stores/deviceStore.js";
 import { ElMessage } from "element-plus";
-import { fa } from "element-plus/es/locales.mjs";
 const deviceStore = useDeviceStore();
 const { selectedDeviceType, deviceTypes } = toRefs(deviceStore);
 const deviceWrite = ref([]);
@@ -85,6 +84,9 @@ const writeConfig = async (detail, flag) => {
     switch (flag) {
       case 1:
         detail.forEach((o) => {
+          if (o.check == "18") {
+            o.value = 3;
+          }
           if (o.check == "31") {
             o.value = 1;
           }
@@ -116,6 +118,9 @@ const writeConfig = async (detail, flag) => {
         break;
       case 2:
         detail.forEach((o) => {
+          if (o.check == "18") {
+            o.value = 3;
+          }
           if (o.check == "31") {
             o.value = 2;
           }
@@ -147,6 +152,9 @@ const writeConfig = async (detail, flag) => {
         break;
       case 3:
         detail.forEach((o) => {
+          if (o.check == "18") {
+            o.value = 3;
+          }
           if (o.check == "31") {
             o.value = 1;
           }
@@ -178,6 +186,9 @@ const writeConfig = async (detail, flag) => {
         break;
       case 4:
         detail.forEach((o) => {
+          if (o.check == "18") {
+            o.value = 3;
+          }
           if (o.check == "31") {
             o.value = 2;
           }
@@ -208,10 +219,9 @@ const writeConfig = async (detail, flag) => {
         });
         break;
     }
-    await deviceStore.sendConfigCommand(detail);
-    if (deviceStore.configStatus) {
+    const result = await deviceStore.sendConfigCommand(detail);
+    if (result.data) {
       writeLoading.value = false;
-      deviceStore.slaveAddress = form.value.slaveAddress;
       dialogShow.value = false;
       ElMessage.success(`Configuration written successfully`);
     } else {

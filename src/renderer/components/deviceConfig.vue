@@ -66,7 +66,6 @@
           <el-form-item label="Slave Address">
             <el-input
               v-model.number="slaveAddress"
-              @input="onSlaveAddressChange"
               placeholder="Enter Slave Address"
               size="small"
               :disabled="isRunning || discoverLoading || startLoading"
@@ -144,12 +143,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, toRefs } from "vue";
 import EditSlaveAddress from "./editSlaveAddress.vue";
 import Config from "./writeConfig.vue";
 import { ElMessage } from "element-plus";
 
 import { useDeviceStore } from "../stores/deviceStore.js";
+import { storeToRefs } from "pinia";
 const deviceStore = useDeviceStore();
 const availableBaudRates = ref([
   2400, // 传统拨号调制解调器常用
@@ -162,15 +162,14 @@ const availableBaudRates = ref([
   115200, // 现代单片机（如ESP32）、多数串口设备默认
   230400, // 高速串口通信
 ]);
+const { baudRate, slaveAddress, deviceTypes } = storeToRefs(deviceStore);
+
 const selectedDeviceTypeIndex = ref(deviceStore.selectedDeviceType);
-const slaveAddress = ref(deviceStore.slaveAddress);
-const baudRate = ref(deviceStore.baudRate);
-const deviceTypes = deviceStore.deviceTypes;
 
 const isRunning = ref(false);
 
 const isFormValid = computed(() => {
-  const selectedDevice = deviceTypes[selectedDeviceTypeIndex.value];
+  const selectedDevice = deviceTypes.value[selectedDeviceTypeIndex.value];
   if (selectedDevice?.needSlaveAddress) {
     return (
       slaveAddress.value &&
@@ -192,13 +191,9 @@ const isDiscoverFormValid = computed(() => {
 
 const onDeviceTypeChange = () => {
   deviceStore.setSelectedDeviceType(selectedDeviceTypeIndex.value);
-  slaveAddress.value = deviceStore.slaveAddress;
   baudRate.value = deviceStore.baudRate;
 };
 
-const onSlaveAddressChange = () => {
-  deviceStore.setSlaveAddress(slaveAddress.value);
-};
 const discoverLoading = ref(false);
 const discoverDevices = async () => {
   if (!isDiscoverFormValid.value) return;

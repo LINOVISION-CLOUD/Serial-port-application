@@ -7,6 +7,8 @@ const openPorts = new Map();
 const dataBuffers = new Map();
 // 存储每个串口的定时器（路径 -> 定时器 ID）
 const timers = new Map();
+// 存储每个串口的事件监听器（路径 -> 监听器数组）
+const dataListeners = new Map();
 
 contextBridge.exposeInMainWorld("electronAPI", {
   // 获取可用串口列表
@@ -15,17 +17,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // 创建串口（自动处理旧端口关闭）
   createSerialPort: (path, options) => {
     return new Promise((resolve, reject) => {
-      // 关闭已存在的同路径端口
+      // 关闭已存在的同路径端口并移除监听器
       if (openPorts.has(path)) {
         openPorts.get(path).close();
-        openPorts.delete(path);
+        removeAllListeners(path);
       }
+      console.log(options);
 
       const port = new SerialPort({ path, ...options });
       port.on("open", () => {
         openPorts.set(path, port);
-        // 初始化该串口的数据缓冲区
+        // 初始化该串口的数据缓冲区和监听器存储
         dataBuffers.set(path, Buffer.alloc(0));
+        dataListeners.set(path, []);
         console.log("串口打开:", path);
         resolve();
       });
@@ -33,6 +37,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         openPorts.delete(path);
         dataBuffers.delete(path);
         timers.delete(path);
+        removeAllListeners(path);
         console.error("串口创建失败:", error);
         reject(new Error("Open failed, the target serial port is occupied"));
       });
@@ -75,18 +80,21 @@ contextBridge.exposeInMainWorld("electronAPI", {
     dataBuffers.set(path, Buffer.alloc(0));
   },
 
-  // 绑定数据接收事件
+  // 绑定数据接收事件（替换旧监听器）
   onData: (path, callback) => {
     const port = openPorts.get(path);
     if (port && port.isOpen) {
-      port.on("data", (chunk) => {
+      // 移除该路径上的所有旧监听器
+      removeAllListeners(path);
+
+      // 创建新监听器
+      const dataListener = (chunk) => {
         const buffer = dataBuffers.get(path);
         const newBuffer = Buffer.concat([buffer, chunk]);
         dataBuffers.set(path, newBuffer);
 
         // 清除之前的定时器
         const prevTimer = timers.get(path);
-        console.log(prevTimer);
         if (prevTimer) {
           clearTimeout(prevTimer);
         }
@@ -111,11 +119,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
         }, idleTime);
 
         timers.set(path, newTimer);
-        console.log(timers.get(path));
-      });
+      };
+
+      // 注册新监听器并保存引用
+      port.on("data", dataListener);
+      dataListeners.get(path).push(dataListener);
     } else {
       console.error("数据事件绑定失败：串口未打开", path);
     }
+  },
+
+  // 移除数据接收事件监听器
+  offData: (path) => {
+    removeAllListeners(path);
   },
 
   // 关闭串口
@@ -126,11 +142,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
         resolve(); // 无实例直接 resolve
         return;
       }
+
+      // 移除监听器和定时器
+      removeAllListeners(path);
       const timer = timers.get(path);
       if (timer) {
         clearTimeout(timer);
         timers.delete(path);
       }
+
       port.close((err) => {
         if (err) reject(err);
         else {
@@ -142,3 +162,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
     });
   },
 });
+
+// 辅助函数：移除指定路径的所有监听器
+function removeAllListeners(path) {
+  const port = openPorts.get(path);
+  if (port && dataListeners.has(path)) {
+    const listeners = dataListeners.get(path);
+    listeners.forEach((listener) => {
+      port.off("data", listener);
+    });
+    dataListeners.get(path).length = 0; // 清空数组
+  }
+}
